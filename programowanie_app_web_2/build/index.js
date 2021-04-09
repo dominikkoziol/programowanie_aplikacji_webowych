@@ -1,5 +1,6 @@
 var Drumkit = /** @class */ (function () {
     function Drumkit() {
+        this.chanelNumber = 0;
         this.appStart();
     }
     Drumkit.prototype.appStart = function () {
@@ -8,16 +9,42 @@ var Drumkit = /** @class */ (function () {
         this.setDivs();
         this.setChanels();
         document.addEventListener("keydown", function (event) { _this.onKeyDown(event); });
-        var chanel1 = document.querySelector("#chanel-1");
-        chanel1.addEventListener("click", function () { _this.playChanel1(); });
+        this.addEventsToPlayAndRecordButtons();
     };
-    Drumkit.prototype.recordChanel1 = function () {
+    Drumkit.prototype.addEventsToPlayAndRecordButtons = function () {
+        var _this = this;
+        var _loop_1 = function (i) {
+            var playButton = document.querySelector("[data-chanel-play=\"" + i + "\"]");
+            var recordButton = document.querySelector("[data-chanel-record=\"" + i + "\"]");
+            playButton.addEventListener("click", function () { return _this.playChanel(i); });
+            recordButton.addEventListener("click", function () { return _this.recordChanel(i); });
+        };
+        for (var i = 1; i < 5; i++) {
+            _loop_1(i);
+        }
+    };
+    Drumkit.prototype.playChanel = function (chanelNumber) {
+        var _this = this;
+        if (this.chanelNumber) {
+            this.chanelDictionary[chanelNumber].forEach(function (element) {
+                setTimeout(function () { return _this.playSound(element.key); }, element.timeFromPreviousSong);
+            });
+        }
+    };
+    Drumkit.prototype.recordChanel = function (chanelNumber) {
+        console.log("Recording chanel: " + chanelNumber);
+        this.chanelNumber = chanelNumber;
     };
     Drumkit.prototype.onKeyDown = function (event) {
         var key = event.key;
         // var timeFromBegin = event.timeStamp;
-        var time = event.timeStamp;
-        this.chanel1.push({ key: key, time: time });
+        if (this.chanelNumber) {
+            var timeFromWebsiteInit = event.timeStamp;
+            var chanel = this.chanelDictionary[this.chanelNumber];
+            var timeFromPreviousSong = !chanel.length ? 0 : ((timeFromWebsiteInit - chanel[chanel.length - 1].timeFromWebsiteInit) + chanel[chanel.length - 1].timeFromPreviousSong);
+            chanel.push({ key: key, timeFromWebsiteInit: timeFromWebsiteInit, timeFromPreviousSong: timeFromPreviousSong });
+            console.log(chanel);
+        }
         this.playSound(key);
     };
     Drumkit.prototype.playSound = function (key) {
@@ -56,24 +83,19 @@ var Drumkit = /** @class */ (function () {
             "o": document.querySelector("#o")
         };
     };
-    Drumkit.prototype.playChanel1 = function () {
-        var _this = this;
-        console.log(this.chanel1);
-        this.chanel1.forEach(function (element) {
-            setTimeout(function () { return _this.playSound(element.key); }, element.time);
-        });
-    };
     Drumkit.prototype.setChanels = function () {
-        this.chanel1 = [];
-        this.chanel2 = [];
-        this.chanel3 = [];
-        this.chanel4 = [];
+        this.chanelDictionary = {
+            1: [],
+            2: [],
+            3: [],
+            4: []
+        };
     };
     return Drumkit;
 }());
-var Chanel = /** @class */ (function () {
-    function Chanel() {
+var RecordData = /** @class */ (function () {
+    function RecordData() {
     }
-    return Chanel;
+    return RecordData;
 }());
 var app = new Drumkit();

@@ -1,10 +1,8 @@
 class Drumkit {
-    chanel1: Chanel[];
-    chanel2: Chanel[];
-    chanel3: Chanel[];
-    chanel4: Chanel[];
+    chanelDictionary: { [number: number]: RecordData[] };
     soundsDictionary: { [key: string]: HTMLAudioElement };
     divDictionary: { [char: string]: HTMLElement };
+    private chanelNumber: number = 0;
     constructor() {
         this.appStart();
     }
@@ -14,32 +12,56 @@ class Drumkit {
         this.setDivs();
         this.setChanels();
         document.addEventListener("keydown", (event: KeyboardEvent) => { this.onKeyDown(event) });
-        const chanel1 = document.querySelector("#chanel-1");
-        chanel1.addEventListener("click", () => { this.playChanel1() });
-
+        this.addEventsToPlayAndRecordButtons();
     }
 
-    public recordChanel1() {
+    public addEventsToPlayAndRecordButtons(): void {
+        for (let i = 1; i < 5; i++) {
+            const playButton: HTMLButtonElement = document.querySelector(`[data-chanel-play="${i}"]`);
+            const recordButton: HTMLButtonElement = document.querySelector(`[data-chanel-record="${i}"]`);
+            playButton.addEventListener("click", () => this.playChanel(i));
+            recordButton.addEventListener("click", () => this.recordChanel(i))
+        }
 
+        
+    }
+
+    public playChanel(chanelNumber: number): void {
+        if (this.chanelNumber) {
+            this.chanelDictionary[chanelNumber].forEach(element => {
+                setTimeout(() => this.playSound(element.key), element.timeFromPreviousSong)
+            });
+        }
+    }
+
+    public recordChanel(chanelNumber: number): void {
+        console.log(`Recording chanel: ${chanelNumber}`);
+        this.chanelNumber = chanelNumber;
     }
 
     onKeyDown(event: KeyboardEvent): void {
-        var key = event.key;
+        const key = event.key;
         // var timeFromBegin = event.timeStamp;
-        var time = event.timeStamp;
-        this.chanel1.push({ key, time });
+        if (this.chanelNumber) {
+            const timeFromWebsiteInit = event.timeStamp;
+            const chanel = this.chanelDictionary[this.chanelNumber];
+            const timeFromPreviousSong = !chanel.length ? 0 : ((timeFromWebsiteInit - chanel[chanel.length - 1].timeFromWebsiteInit) + chanel[chanel.length - 1].timeFromPreviousSong);
+            chanel.push({ key, timeFromWebsiteInit, timeFromPreviousSong });
+            console.log(chanel);
+        }
+
         this.playSound(key);
     }
 
     playSound(key: string): void {
-       
+
         var div = this.divDictionary[key];
         div.style.backgroundColor = "#44fb38";
         var audio = this.soundsDictionary[key];
         audio.currentTime = 0
         audio.play();
         setTimeout(() => div.style.backgroundColor = "#efefef", 300)
-        
+
     }
 
     setSounds(): void {
@@ -73,25 +95,22 @@ class Drumkit {
         }
     }
 
-    playChanel1(): void {
-        console.log(this.chanel1)
-        this.chanel1.forEach(element => {
-            setTimeout(() => this.playSound(element.key), element.time)
-        });
-    }
-
     setChanels(): void {
-        this.chanel1 = [];
-        this.chanel2 = [];
-        this.chanel3 = [];
-        this.chanel4 = [];
+        this.chanelDictionary = {
+            1: [],
+            2: [],
+            3: [],
+            4: []
+        };
     }
 
 }
-class Chanel {
+class RecordData {
     key: string;
-    time: number;
-    //timeFromBegin: number;
+    //timeFromWebsiteInit: Is timestamp, which contains value how many miliseconds pass from website init
+    timeFromWebsiteInit: number;
+    //timeFromPreviousSong: Is time, which passed since previous sound (pattern: timeFromWebsiteInit[i] - timeFromWebsiteInit[i - 1] + timeFromPreviousSong[i - 1])
+    timeFromPreviousSong: number;
 }
 
 

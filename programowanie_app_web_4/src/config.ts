@@ -1,5 +1,5 @@
 export const config = {
-    usingLocalStorage: true,
+    usingLocalStorage: false,
     firebaseConfig: {
         apiKey: "AIzaSyCGPl-oX21YQBh2v82kClylJrvnQ6u7wIE",
         authDomain: "notekeep-88b3d.firebaseapp.com",

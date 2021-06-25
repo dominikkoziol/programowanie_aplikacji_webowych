@@ -1,17 +1,15 @@
 {
-    "compilerOptions": {
-        "module": "system",
-        "noImplicitAny": true,
-        "removeComments": true,
-        "preserveConstEnums": true,
-        "outFile": "build/index.js",
-        "sourceMap": true
-    },
-    "include": [
-        "src/**/*"
-    ],
-    "exclude": [
-        "node_modules",
-        "**/*.spec.ts"
-    ]
+  "compilerOptions": {
+    "sourceMap": true,
+    // "strictNullChecks": true,
+    "noImplicitAny": true,
+    "module": "commonjs",
+    "target": "es2019",
+    "removeComments": true,
+  },
+  "include": [
+    "src/**/*",
+    "tests",
+    "jest.config.js"
+  ],
 }

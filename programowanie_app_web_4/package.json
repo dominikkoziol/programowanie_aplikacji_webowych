@@ -1,0 +1,35 @@
+{
+  "name": "programowanie_app_web_4",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.ts",
+  "scripts": {
+    "test": "jest",
+    "start": "webpack-dev-server --content-base src",
+    "build": "webpack"
+  },
+  "dependencies": {
+    "firebase": "^8.6.8",
+    "loader-utils": "^2.0.0",
+    "shortid": "^2.2.16",
+    "style-loader": "^2.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^15.12.4",
+    "@types/shortid": "0.0.29",
+    "@types/webpack": "^5.28.0",
+    "clean-webpack-plugin": "^4.0.0-alpha.0",
+    "copy-webpack-plugin": "^5.1.1",
+    "css-loader": "^5.2.6",
+    "declaration-bundler-webpack-plugin": "^1.0.3",
+    "sass": "^1.35.1",
+    "sass-loader": "^10",
+    "ts-loader": "^6.2.1",
+    "typescript": "^4.3.4",
+    "webpack": "^4.46.0",
+    "webpack-cli": "^3.3.12",
+    "webpack-dev-server": "^3.10.3"
+  },
+  "author": "",
+  "license": "ISC"
+}

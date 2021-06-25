@@ -1,0 +1,246 @@
+$default-black: #414A4C;
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;500;700;800&display=swap');
+
+@mixin button-with-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+
+    background-color: white;
+    border: none;
+    border-radius: 50%;
+
+    box-shadow: 2px 2px 6px rgba(105, 105, 105, 0.77);
+    cursor: pointer;
+}
+
+@font-face {
+    font-family: 'Material Icons';
+    font-style: normal;
+    font-weight: 400;
+    src: url("https://fonts.googleapis.com/icon?family=Material+Icons");
+}
+
+.material-icons {
+    font-family: 'Material Icons';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;
+    /* Preferred icon size */
+    display: inline-block;
+    line-height: 1;
+    text-transform: none;
+    letter-spacing: normal;
+    word-wrap: normal;
+    white-space: nowrap;
+    direction: ltr;
+
+    /* Support for all WebKit browsers. */
+    -webkit-font-smoothing: antialiased;
+    /* Support for Safari and Chrome. */
+    text-rendering: optimizeLegibility;
+
+    /* Support for Firefox. */
+    -moz-osx-font-smoothing: grayscale;
+
+    /* Support for IE. */
+    font-feature-settings: 'liga';
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 16px;
+    color: white;
+}
+
+.content {
+    max-width: 100vw;
+    min-height: 100vh;
+    background-color: $default-black;
+    padding: 10px;
+
+    .menu {
+        width: 100%;
+        display: flex;
+        flex-direction: row-reverse;
+
+        button {
+            display: flex;
+            align-items: center;
+            border: 2px solid white;
+            border-radius: 6px;
+            background-color: transparent;
+            color: white;
+            padding: 10px 15px;
+            font-size: 24px;
+            transition: 200ms;
+            cursor: pointer;
+
+            &:hover {
+                background-color: white;
+                color: $default-black;
+
+            }
+        }
+    }
+
+    #notes-wrapper {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-around;
+        width: 100%;
+
+
+        .note {
+            width: 300px;
+            height: 300px;
+            margin: 10px;
+
+            transition: 300ms;
+            padding: 10px;
+            position: relative;
+
+            p {
+                height: 200px;
+                overflow-y: auto;
+                margin: 20px 0 10px 0;
+            }
+
+            >span {
+                position: absolute;
+                bottom: 10px;
+
+                &:last-of-type {
+                    bottom: 30px;
+                }
+            }
+
+
+            button {
+                position: absolute;
+                top: 15px;
+                right: 10px;
+                width: 30px;
+                height: 30px;
+
+                @include button-with-icon();
+
+
+                span {
+                    font-size: 18px;
+                }
+            }
+            
+            .pin {
+                right: 45px;
+            
+
+
+               
+            }
+        }
+    }
+}
+
+h1,
+h2,
+h3 {
+    margin: 6px 0;
+}
+
+
+h1 {
+    font-size: 2.5em;
+}
+
+h2 {
+    font-size: 1.5em;
+}
+
+h3 {
+    font-size: 1.4em;
+}
+
+
+#add-note-wrapper {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(black, 0.4);
+    display: none;
+    justify-content: center;
+    align-items: center;
+
+    .note-form-wrapper {
+        background-color: white;
+        width: 60vw;
+        height: 60vh;
+        position: relative;
+        padding: 20px;
+
+        h2 {
+            color: $default-black;
+        }
+
+        >button {
+            @include button-with-icon();
+            position: absolute;
+            top: 8px;
+            right: 8px;
+
+            width: 45px;
+            height: 45px;
+
+            font-size: 36px;
+            background-color: #eeeeee;
+        }
+
+        form {
+            >div {
+                display: flex;
+                flex-direction: column;
+                margin: 10px 0;
+
+                label {
+                    color: black;
+                }
+
+
+                textarea {
+                    resize: vertical;
+                    max-height: 300px;
+                    min-height: 200px;
+                }
+
+
+
+                #submit-new-note {
+                    border: 2px solid #414A4C;
+                    background-color: transparent;
+                    width: 140px;
+                    padding: 6px 16px;
+                    border-radius: 6px;
+
+                    color: #414A4C;
+                    font-weight: 600;
+                    transition: 200ms;
+                    cursor: pointer;
+
+                    &:hover {
+                        background-color: #414A4C;
+                        color: white;
+                    }
+                }
+
+               
+            }
+            .submit-wrapper {
+                display: flex;
+                flex-direction: row-reverse;
+            }
+        }
+    }
+}

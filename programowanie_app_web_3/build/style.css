@@ -84,3 +84,18 @@ button {
 b {
     font-weight: 700;
 }
+
+
+#quick-choose {
+    width: 100%;
+    max-width: 500px;
+    overflow-x: auto;
+    display: flex;
+    flex-wrap: nowrap;
+}
+
+
+.quick {
+    min-width: 100px;
+    margin: 5px 10px;
+}

@@ -9,8 +9,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 class WeatherApp {
     constructor() {
-        this.API_KEY = "0b5f6e80c44cf739a9c9a0a61c79140e";
+        this.API_KEY = "ef96327aa7b0e4dce3e88d08907eb642";
         this.API_URL = `http://api.openweathermap.org/data/2.5/weather?appid=${this.API_KEY}&units=metric`;
+        this.refreshInterval = null;
+        this.cities = [];
         this.init();
     }
     init() {
@@ -18,14 +20,39 @@ class WeatherApp {
         this.getSavedCities();
     }
     getSavedCities() {
+        this.cities = localStorage.getItem("cities") ? JSON.parse(localStorage.getItem("cities")) : [];
+        this.refreshQuickChoose();
+    }
+    refreshQuickChoose() {
+        const quickChooseWrapper = document.querySelector("#quick-choose");
+        quickChooseWrapper.innerHTML = null;
+        this.cities.forEach(c => {
+            const button = document.createElement("button");
+            button.classList.add("quick");
+            button.innerHTML = c;
+            button.addEventListener("click", () => __awaiter(this, void 0, void 0, function* () {
+                const input = document.querySelector("input[name='search-value']");
+                input.value = c;
+                if (this.refreshInterval) {
+                    clearInterval(this.refreshInterval);
+                    this.refreshInterval = null;
+                }
+                yield this.searchData(c);
+            }));
+            quickChooseWrapper.appendChild(button);
+        });
     }
     addSubmitListener() {
         const button = document.querySelector("#submit-search");
-        console.log("BUTTON", button);
         button.addEventListener("click", () => __awaiter(this, void 0, void 0, function* () {
             const city = this.getInputValue();
-            if (city)
+            if (city) {
+                if (this.refreshInterval) {
+                    clearInterval(this.refreshInterval);
+                    this.refreshInterval = null;
+                }
                 yield this.searchData(city);
+            }
             else
                 this.showFormError("Aby wyszukać, uzupełnij pole miasto");
         }));
@@ -37,7 +64,9 @@ class WeatherApp {
             const weatherData = weatherQuery.json();
             weatherData.then((data) => {
                 if (data.cod == 200) {
-                    this.saveData("city", city);
+                    this.saveData(city);
+                    if (!this.refreshInterval)
+                        this.addRefreshListeners(data.name);
                     this.createSuccessContainer(data);
                 }
                 else
@@ -66,7 +95,6 @@ class WeatherApp {
     createSuccessContainer(data) {
         this.cleanError();
         this.cleanData();
-        console.log(data);
         const container = document.querySelector("#container");
         const dataWrapper = document.createElement("div");
         dataWrapper.id = "data";
@@ -92,6 +120,14 @@ class WeatherApp {
         tempValue.innerHTML = `<b>${Math.round(data.main.temp)}&#8451;</b>`;
         tempWrapper.appendChild(tempTitle);
         tempWrapper.appendChild(tempValue);
+        const tempFeelWrapper = document.createElement("div");
+        tempFeelWrapper.classList.add("stats");
+        const tempFeelTitle = document.createElement("span");
+        const tempFeelValue = document.createElement("span");
+        tempFeelTitle.innerHTML = "Odczuwalna: ";
+        tempFeelValue.innerHTML = `<b>${Math.round(data.main.feels_like)}&#8451;</b>`;
+        tempFeelWrapper.appendChild(tempFeelTitle);
+        tempFeelWrapper.appendChild(tempFeelValue);
         const humidityWrapper = document.createElement("div");
         humidityWrapper.classList.add("stats");
         const humidityTitle = document.createElement("span");
@@ -116,14 +152,48 @@ class WeatherApp {
         windValue.innerHTML = `<b>${data.wind.speed}m/s</b>`;
         windWrapper.appendChild(windTitle);
         windWrapper.appendChild(windValue);
+        const cloudWrapper = document.createElement("div");
+        cloudWrapper.classList.add("stats");
+        const cloudTitle = document.createElement("span");
+        const cloudValue = document.createElement("span");
+        cloudTitle.innerHTML = "Zachmnurzenie: ";
+        cloudValue.innerHTML = `<b>${data.clouds.all}%</b>`;
+        cloudWrapper.appendChild(cloudTitle);
+        cloudWrapper.appendChild(cloudValue);
         statsWrapper.appendChild(tempWrapper);
+        statsWrapper.appendChild(tempFeelWrapper);
         statsWrapper.appendChild(humidityWrapper);
         statsWrapper.appendChild(pressureWrapper);
         statsWrapper.appendChild(windWrapper);
+        statsWrapper.appendChild(cloudWrapper);
         dataWrapper.appendChild(statsWrapper);
+        const refreshInfo = document.createElement("span");
+        refreshInfo.id = "refresh-info";
+        refreshInfo.innerHTML = this.refreshTime;
+        dataWrapper.appendChild(refreshInfo);
     }
-    saveData(key, value) {
-        localStorage.setItem(key, value);
+    addRefreshListeners(data) {
+        this.refreshTime = "Następne odświeżenie nastąpi o: <b>" + getTime();
+        +"</b>";
+        this.refreshInterval = setInterval(() => __awaiter(this, void 0, void 0, function* () {
+            this.refreshTime = "Następne odświeżenie nastąpi o: <b>" + getTime();
+            +"</b>";
+            this.searchData(data);
+        }), 120000);
+        function getTime() {
+            const newDate = new Date(new Date().getTime() + 2 * 60000);
+            const hours = newDate.getHours();
+            const minutes = newDate.getMinutes();
+            return (hours < 10 ? '0' + hours : hours) + ':' + (minutes < 10 ? '0' + minutes : minutes);
+        }
+    }
+    saveData(value) {
+        const city = this.cities.find(q => q == value);
+        if (city)
+            return;
+        this.cities.push(value);
+        localStorage.setItem("cities", JSON.stringify(this.cities));
+        this.refreshQuickChoose();
     }
     getInputValue() {
         const input = document.querySelector("input[name='search-value']");

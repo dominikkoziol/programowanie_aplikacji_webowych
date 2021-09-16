@@ -21,6 +21,7 @@ export default class FirebaseService implements IAppStorage {
     
     delete(id: string): void { 
         this._db.collection(collection).doc(id).delete();
+        // this._db.
     }
 
     async getNote(id: string): Promise<Note> {

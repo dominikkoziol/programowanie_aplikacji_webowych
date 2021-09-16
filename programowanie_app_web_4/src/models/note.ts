@@ -3,8 +3,13 @@ import { Utils } from "../code/utils";
 export default class Note {
     constructor(pojo: any = null) {
         if(pojo) { 
-            Utils.ShallowCopy(this, pojo)
-            if(pojo.reminderOn) this.reminderOn =  this._toDateTime(pojo.reminderOn.seconds)
+            Utils.ShallowCopy(this, pojo);
+            if(pojo.reminderOn){
+                pojo.reminderOn = new Date(pojo.reminderOn);
+               
+                this.reminderOn =  this._toDateTime(pojo.reminderOn.getSeconds())
+                console.log(this.reminderOn)
+            } 
         }
     }
     public id: string = '';

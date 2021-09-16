@@ -69,10 +69,11 @@ export class UserInterface {
 
 
     private _parseDate(date: Date) {
-        var mm = date.getMonth() + 1; // getMonth() is zero-based
-        var dd = date.getDate();
+        const date2 = new Date(date);
+        const mm = date2.getMonth() + 1; // getMonth() is zero-based
+        const dd = date2.getDate();
 
-        return [date.getFullYear(),
+        return [date2.getFullYear(),
             "-",
         (mm > 9 ? '' : '0') + mm,
             "-",

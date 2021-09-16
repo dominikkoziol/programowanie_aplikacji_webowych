@@ -68,6 +68,7 @@ class App {
     private async _getNotes(): Promise<void> {
         this._ui.clearNotes();
         const notes = this._sort(await this._storage.getNotes());
+        console.log("aaaaaa", notes)
         notes.forEach((n, i) => {
             this._ui.generateNote(n, i);
             document.getElementById(`close-${i}`).addEventListener('click', () => this._removeNote(n.id));

@@ -1,11 +1,18 @@
 import { Utils } from "../code/utils";
+import { config } from "../config";
 
 export default class Note {
     constructor(pojo: any = null) {
         if(pojo) { 
             Utils.ShallowCopy(this, pojo);
             if(pojo.reminderOn){
-                this.reminderOn =  this._toDateTime(pojo.reminderOn.seconds)
+                if(config.usingLocalStorage) {
+                    pojo.reminderOn = new Date(pojo.reminderOn);
+                    this.reminderOn =  this._toDateTime(pojo.reminderOn.getSeconds());
+                }
+                else this.reminderOn =  this._toDateTime(pojo.reminderOn.seconds);
+                
+            
                 console.log(this.reminderOn)
             } 
         }

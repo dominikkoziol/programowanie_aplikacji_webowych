@@ -31,9 +31,7 @@ describe('e2e test', () => {
 
 
     it("Did note has been created sucessfully?", async () => {
-        jest.setTimeout(100000000)
-
-        await page.waitForSelector("#notes-wrapper .note", {timeout: 10000000});
+        await page.waitForSelector("#notes-wrapper .note");
 
         let newNoteCount = await page.evaluate(() => {
             let allNotes = document.querySelectorAll(".note");

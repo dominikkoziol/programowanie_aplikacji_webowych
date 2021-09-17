@@ -6,4 +6,5 @@ export default interface IAppStorage {
     getNote(id: string): Promise<Note>;
     getNotes(): Promise<Note[]>;
     updatePin(note: Note): Promise<void>;
+    update(note: Note): Promise<void>;
 }

@@ -13,7 +13,7 @@ export default class Note {
                 else this.reminderOn =  this._toDateTime(pojo.reminderOn.seconds);
                 
             
-                console.log(this.reminderOn)
+
             } 
         }
     }

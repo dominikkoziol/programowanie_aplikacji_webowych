@@ -16,7 +16,7 @@ export class UserInterface {
         const closeIcon = document.createElement("span");
         const pinButton = document.createElement("button");
         const pinIcon = document.createElement("span");
-
+        title.classList.add("title-button");
 
         close.id = `close-${index}`;
         
@@ -52,6 +52,8 @@ export class UserInterface {
         noteWrapper.appendChild(content);
         noteWrapper.appendChild(pinButton);
         this._notesWrapper.appendChild(noteWrapper);
+
+        return title;
     }
 
     public clearNotes() {

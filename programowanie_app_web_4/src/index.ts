@@ -8,7 +8,7 @@ import "./style.scss";
 import Note from './models/note';
 
 const defaultColor: string = "#F79862";
-class App {
+export class App {
     private _storage?: IAppStorage;
     private _ui: UserInterface = new UserInterface();
     private _isNotificationPermitted: boolean = false;
@@ -28,7 +28,8 @@ class App {
         title: (document.querySelector("#title") as HTMLInputElement),
         content: (document.querySelector("#content") as HTMLTextAreaElement),
         reminderOn: document.querySelector("#reminder") as HTMLInputElement,
-        color: document.querySelector("#color") as HTMLSelectElement
+        color: document.querySelector("#color") as HTMLSelectElement,
+        id: ''
     }
 
     private _addEventListiners() {
@@ -42,6 +43,7 @@ class App {
             this._clearForm();
         });
 
+        
 
         document.querySelector("#submit-new-note").addEventListener("click", () => {
             const note = new Note();
@@ -49,9 +51,10 @@ class App {
             note.content = this._noteHTML.content.value;
             note.reminderOn = new Date(this._noteHTML.reminderOn.value);
             note.color = this._noteHTML.color.options[this._noteHTML.color.options.selectedIndex].value ?? defaultColor;
+            note.id = this._noteHTML.id;
 
             if (note.title && note.content) {
-                this._storage.save(note);
+                !note.id ? this._storage.save(note) : this._storage.update(note);
            
                 if (!isNaN(note.reminderOn.getTime())) {
                     setTimeout(() => {
@@ -70,8 +73,22 @@ class App {
         this._ui.clearNotes();
         const notes = this._sort(await this._storage.getNotes());
         notes.forEach((n, i) => {
-            this._ui.generateNote(n, i);
+           const note = this._ui.generateNote(n, i);
+
+           note.addEventListener("click", async () => {
+               
+               var note = await this._storage.getNote(n.id);
+               this._noteHTML.color.value = note.color;
+               this._noteHTML.content.value = note.content;
+               this._noteHTML.reminderOn.value = (<any>note.reminderOn);
+               this._noteHTML.title.value = note.title;
+               this._noteHTML.id = note.id;
+
+
+               this._ui.manageAddFormVisibility(true);
+           })
             document.getElementById(`close-${i}`).addEventListener('click', () => this._removeNote(n.id));
+
             if (this._isNotificationPermitted && n.reminderOn) {
                 if (n.reminderOn.getTime() > Date.now()) {
                     setTimeout(() => {
@@ -93,7 +110,6 @@ class App {
 
     private _requestNotification() {
         Notification.requestPermission().then(permissions => {
-            console.log(permissions)
             this._isNotificationPermitted = permissions == "granted" ? true : false;
         });
     }
@@ -110,10 +126,10 @@ class App {
         this._noteHTML.content.value = null;
         this._noteHTML.reminderOn.value = null;
         this._noteHTML.title.value = null;
+        this._noteHTML.id = null;
     }
 
-    private _sort = (notes: Note[]): Note[] => 
-            notes.sort((el1: Note, el2: Note) =>  (el1.isPinned === el2.isPinned)? 0 : el1.isPinned? -1 : 1);
+     private _sort = (notes: Note[]): Note[] => notes.sort((el1: Note, el2: Note) =>  (el1.isPinned === el2.isPinned)? 0 : el1.isPinned? -1 : 1);
      
     
 }

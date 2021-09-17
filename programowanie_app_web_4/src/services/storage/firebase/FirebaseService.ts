@@ -11,9 +11,10 @@ export default class FirebaseService implements IAppStorage {
         const firebaseApp = Firebase.initializeApp(config.firebaseConfig);
         this._db = firebaseApp.firestore();
     }
+    async update(note: Note): Promise<void> {
+        await this._db.collection('notes').doc(note.id).set({ ...note });   
+    }
  
-
-
     async save(note: Note): Promise<void> {
         note.createdOn = new Date();
         await this._db.collection(collection).add({ ...note });
@@ -48,6 +49,8 @@ export default class FirebaseService implements IAppStorage {
         note.isPinned = !note.isPinned;
         await this._db.collection('notes').doc(note.id).set({ ...note });   
     }
+
+    
 
 
 }

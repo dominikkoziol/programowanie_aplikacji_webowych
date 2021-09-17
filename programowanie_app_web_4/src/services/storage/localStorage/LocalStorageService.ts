@@ -8,10 +8,20 @@ export default class LocalStorageService implements IAppStorage {
 
     constructor() {
         this._notes = JSON.parse(localStorage.getItem("notes")).map((d: Note) => new Note(d)) ?? [];
-        console.log(this._notes);
+
     }
-    updatePin(note: Note): Promise<void> {
-        throw new Error("Method not implemented.");
+    async update(note: Note): Promise<void> {
+        const notes: Note[] = JSON.parse(localStorage.getItem("notes")).map((d: Note) => new Note(d)) ?? [];
+        var newNotes = notes.filter(q =>  q.id != note.id );       
+        newNotes.push(note);     
+        localStorage.setItem("notes", JSON.stringify(newNotes));
+    }
+    async updatePin(note: Note): Promise<void> {
+        const notes: Note[] = JSON.parse(localStorage.getItem("notes")).map((d: Note) => new Note(d)) ?? [];
+        var newNotes = notes.filter(q =>  q.id != note.id );       
+        note.isPinned = !note.isPinned;
+        newNotes.push(note);     
+        localStorage.setItem("notes", JSON.stringify(newNotes));
     }
     save(note: Note) {
         note.id = generate();
@@ -25,7 +35,7 @@ export default class LocalStorageService implements IAppStorage {
     }
 
     getNote(id: string): Promise<Note> {
-        return new Promise(() =>this._notes.find(q => q.id == id));
+        return Promise.resolve().then(() => this._notes.find(q => q.id == id));
     }
 
     getNotes(): Promise<Note[]> {

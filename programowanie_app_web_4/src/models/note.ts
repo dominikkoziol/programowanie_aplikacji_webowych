@@ -5,9 +5,7 @@ export default class Note {
         if(pojo) { 
             Utils.ShallowCopy(this, pojo);
             if(pojo.reminderOn){
-                pojo.reminderOn = new Date(pojo.reminderOn);
-               
-                this.reminderOn =  this._toDateTime(pojo.reminderOn.getSeconds())
+                this.reminderOn =  this._toDateTime(pojo.reminderOn.seconds)
                 console.log(this.reminderOn)
             } 
         }

@@ -52,7 +52,8 @@ class App {
 
             if (note.title && note.content) {
                 this._storage.save(note);
-                if (note.reminderOn) {
+           
+                if (!isNaN(note.reminderOn.getTime())) {
                     setTimeout(() => {
                         new Notification(note.title);
                     }, (note.reminderOn.getTime() - Date.now()));
@@ -68,7 +69,6 @@ class App {
     private async _getNotes(): Promise<void> {
         this._ui.clearNotes();
         const notes = this._sort(await this._storage.getNotes());
-        console.log("aaaaaa", notes)
         notes.forEach((n, i) => {
             this._ui.generateNote(n, i);
             document.getElementById(`close-${i}`).addEventListener('click', () => this._removeNote(n.id));
